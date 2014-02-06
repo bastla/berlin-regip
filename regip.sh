@@ -1,29 +1,37 @@
 #!/bin/sh
 
-if [ "$#" -lt "7" ]; then
-        echo "usage: $0 <user> <password>" \
-		"<network 104.13.9> <range start> <range end> <plz> <description>"
+if [ "$#" -lt "6" ]; then
+        echo -e "usage:\t$0 <user>" \
+                "<network> <range start> <range end> <plz> <description>" \
+                "\n\n" \
+                "Example: 104.42.42.1/28\n\n" \
+                "$0 foobar 104.42.42 1 15 10997 'foo description'"
         exit 1
 fi
 
-# Postleitzahl, Beschreibung
-plz="$6"
-description="$7"
 # Username von https://ip.berlin.freifunk.net/
 usr="$1"
-# Passwort von https://ip.berlin.freifunk.net/
-pw="$2"
+
 # Range
-net=$3
-i=$4
-end=$5
+net=$2
+i=$3
+end=$4
+
+# Postleitzahl, Beschreibung
+plz="$5"
+description="$6"
+
+# Passwort von https://ip.berlin.freifunk.net/
+read -s -p "Enter Password: " pw
+
+echo -e "\nRegistering your IPs: $2.$i - $2.$end"
 
 # Go
-curl --insecure -c newcookies.txt -d "usr=$usr&pw=$pw" https://ip.berlin.freifunk.net/ip/ip_neu.html > ip_neu.html
+curl -s --insecure -c newcookies.txt -d "usr=$usr&pw=$pw" https://ip.berlin.freifunk.net/ip/ip_neu.html > ip_neu.html
 
 while [ $i -le $end ] ; do
-curl --insecure -b newcookies.txt -d "ip_type=wish&wishIP=$net.$i&plz=$plz&description=${description}&action=ip_neu_dyn" https://ip.berlin.freifunk.net/ip/ip_neu.html > ip_neu.html
-echo $1.$i
+curl -s --insecure -b newcookies.txt -d "ip_type=wish&wishIP=$net.$i&plz=$plz&description=${description}&action=ip_neu_dyn" https://ip.berlin.freifunk.net/ip/ip_neu.html > ip_neu.html
+echo -e "\t$2.$i"
 #echo "ip_type=wish&wishIP=$net.$i&plz=10437&action=ip_neu_dyn"
 i=`expr $i + 1`
 done
