@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ "$#" -lt "6" ]; then
         echo -e "usage:\t$0 <user>" \
