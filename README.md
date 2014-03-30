@@ -1,4 +1,5 @@
 berlin-regip
 ============
 
-shell script for subnet registration in Berlin
+* shell script for subnet registration in Berlin
+* requires: curl
